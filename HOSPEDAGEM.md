@@ -18,6 +18,37 @@ Isso gera o build do frontend e copia para `server/public`. O servidor passa a s
 
 ## 2. Opções de hospedagem
 
+### Opção: Vercel (front + API na mesma URL)
+
+O projeto está pronto para rodar **tudo na Vercel**: o site (PWA) e a API em um único domínio. O banco é o **Turso** (SQLite na nuvem, free tier).
+
+**Passo 1 – Criar o banco Turso**
+
+1. Acesse [turso.tech](https://turso.tech) e crie uma conta.
+2. Instale o CLI: `curl -sSfL https://get.tur.so/install.sh | bash` (ou veja a doc no site).
+3. Crie um banco: `turso db create eloger-nfc --region sao`.
+4. Pegue a URL e o token:
+   - `turso db show eloger-nfc --url`
+   - `turso db tokens create eloger-nfc`
+
+**Passo 2 – Deploy na Vercel**
+
+1. Acesse [vercel.com](https://vercel.com), faça login e **Add New** → **Project**.
+2. Importe o repositório do GitHub (ex.: **PedroVazN/Efix**).
+3. Deixe **Build Command** e **Output Directory** como no projeto (já configurados no `vercel.json`).
+4. Em **Settings** → **Environment Variables** adicione:
+   - `TURSO_DATABASE_URL` = a URL do passo 1 (ex.: `libsql://eloger-nfc-seu-user.turso.io`)
+   - `TURSO_AUTH_TOKEN` = o token gerado no passo 1
+5. Faça o **Deploy**. A Vercel vai gerar uma URL tipo `https://efix-xxx.vercel.app`.
+
+**Passo 3 – Usar no celular**
+
+Abra essa URL no Chrome (Android) e use **Instalar app** / **Adicionar à tela inicial**. O PWA e a API usam a mesma origem, então não é preciso configurar `VITE_API_URL`.
+
+**Injetar os 20 registros de teste:** depois do deploy, faça um POST para `https://sua-url.vercel.app/api/seed` (por exemplo com Postman ou `curl -X POST https://sua-url.vercel.app/api/seed`).
+
+---
+
 ### Opção A: Railway (recomendado – mais simples)
 
 1. Crie uma conta em [railway.app](https://railway.app).

@@ -5,9 +5,12 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:client": "cd client && npm run dev",
     "dev:server": "cd server && npm run dev",
-    "build": "cd client && npm run build",
+    "build": "cd client && npm install && npm run build",
     "build:deploy": "npm run build && node -e \"require('fs').cpSync('client/dist', 'server/public', {recursive: true})\"",
     "start:server": "cd server && npm start"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.14.0"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
