@@ -1,0 +1,28 @@
+# Dependências
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build
+client/dist/
+server/public/
+
+# Ambiente
+.env
+.env.local
+.env.*.local
+client/.env
+
+# Banco (opcional: remova esta linha se quiser versionar o DB)
+server/nfc_fluxo.db
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

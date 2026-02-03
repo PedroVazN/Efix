@@ -1,0 +1,9 @@
+.fluxo-form {
+  padding-bottom: 2rem;
+}
+
+.nfc-hint {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}

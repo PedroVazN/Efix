@@ -1,0 +1,49 @@
+.historico-msg {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 1rem;
+}
+
+.historico-msg.error {
+  color: #ff6b6b;
+}
+
+.historico-lista {
+  list-style: none;
+}
+
+.historico-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.25rem 0.5rem;
+  font-size: 0.9rem;
+}
+
+.historico-item:last-child {
+  border-bottom: none;
+}
+
+.item-pessoa {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.item-op {
+  color: var(--accent);
+  font-size: 0.8rem;
+}
+
+.item-fluxo {
+  grid-column: 1 / -1;
+  color: var(--text-muted);
+}
+
+.item-nfc {
+  grid-column: 1 / -1;
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--success);
+  word-break: break-all;
+}
