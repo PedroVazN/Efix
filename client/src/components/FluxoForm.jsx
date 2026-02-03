@@ -85,6 +85,9 @@ export default function FluxoForm({ API_BASE, onSalvo }) {
 
   return (
     <form className="fluxo-form" onSubmit={handleSubmit}>
+      <p className="fluxo-form-intro">
+        Controle de tempo e entregas: registre quem pegou ou entregou o item, em qual caminho (fluxo) e qual pallet (NFC).
+      </p>
       <div className="card">
         <h2>Pessoa</h2>
         <select
@@ -118,7 +121,8 @@ export default function FluxoForm({ API_BASE, onSalvo }) {
       </div>
 
       <div className="card">
-        <h2>Fluxo</h2>
+        <h2>Fluxo (origem → destino)</h2>
+        <p className="fluxo-hint">Caminho por onde o item está sendo movido.</p>
         <select
           className="select"
           value={fluxo}
@@ -134,9 +138,9 @@ export default function FluxoForm({ API_BASE, onSalvo }) {
       </div>
 
       <div className="card">
-        <h2>NFC</h2>
+        <h2>NFC do pallet</h2>
         <p className="nfc-hint">
-          Toque no botão e aproxime o celular da tag NFC.
+          Leia a tag NFC colada no pallet para identificar o item no controle de tempo e entregas.
         </p>
         <div
           className={`nfc-area ${nfcAtivo ? 'active' : ''} ${nfcLido ? 'read' : ''}`}
@@ -147,9 +151,9 @@ export default function FluxoForm({ API_BASE, onSalvo }) {
             onClick={handleLerNFC}
             disabled={nfcAtivo}
           >
-            {nfcAtivo ? 'Aguardando NFC...' : 'Ativar e ler NFC'}
+            {nfcAtivo ? 'Aguardando NFC...' : 'Ler NFC do pallet'}
           </button>
-          {nfcLido && <div className="nfc-value">{nfcLido}</div>}
+          {nfcLido && <div className="nfc-value">Pallet: {nfcLido}</div>}
         </div>
       </div>
 

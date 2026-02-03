@@ -112,8 +112,10 @@ export default function Historico({ API_BASE }) {
               <span className="item-op">{item.operacao}</span>
               <span className="item-fluxo">{item.fluxo}</span>
               {item.nfc && (
-                <span className="item-nfc" title="NFC">{item.nfc}</span>
+                <span className="item-nfc" title="Pallet">Pallet: {item.nfc}</span>
               )}
+              <span className="item-data-label">Data e hora</span>
+              <time className="item-data" dateTime={item.dataHora}>{formatarDataHora(item.dataHora)}</time>
             </li>
           ))}
         </ul>

@@ -15,7 +15,7 @@ import {
 } from 'recharts'
 import './Dashboard.css'
 
-const CORES = ['#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0']
+const CORES = ['#064e3b', '#065f46', '#047857', '#059669', '#0d9488']
 
 export default function Dashboard({ API_BASE }) {
   const [lista, setLista] = useState([])
@@ -191,7 +191,7 @@ export default function Dashboard({ API_BASE }) {
               <XAxis type="number" tick={{ fill: 'var(--text-muted)', fontSize: 10 }} />
               <YAxis type="category" dataKey="name" width={88} tick={{ fill: 'var(--text)', fontSize: 10 }} />
               <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid var(--border-light)' }} />
-              <Bar dataKey="quantidade" fill="#059669" radius={[0, 6, 6, 0]} name="Registros" />
+              <Bar dataKey="quantidade" fill="var(--accent)" radius={[0, 6, 6, 0]} name="Registros" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -212,7 +212,7 @@ export default function Dashboard({ API_BASE }) {
               />
               <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 10 }} width={28} />
               <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid var(--border-light)' }} />
-              <Bar dataKey="quantidade" fill="#10b981" radius={[6, 6, 0, 0]} name="Registros" />
+              <Bar dataKey="quantidade" fill="var(--accent)" radius={[6, 6, 0, 0]} name="Registros" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -228,7 +228,7 @@ export default function Dashboard({ API_BASE }) {
                 <XAxis dataKey="dia" tick={{ fill: 'var(--text-muted)', fontSize: 10 }} />
                 <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 10 }} width={28} />
                 <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid var(--border-light)' }} />
-                <Line type="monotone" dataKey="quantidade" stroke="#059669" strokeWidth={2.5} dot={{ fill: '#059669', r: 3 }} name="Registros" />
+                <Line type="monotone" dataKey="quantidade" stroke="var(--accent)" strokeWidth={2.5} dot={{ fill: 'var(--accent)', r: 3 }} name="Registros" />
               </LineChart>
             </ResponsiveContainer>
           </div>
