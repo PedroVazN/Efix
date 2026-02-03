@@ -11,19 +11,20 @@
   margin-bottom: 0;
 }
 
-.historico-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
+.historico-seed-row {
+  margin-bottom: 1rem;
+}
+
+.historico-seed-row .btn-seed {
+  width: 100%;
 }
 
 .btn-seed {
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  background: rgba(234, 179, 8, 0.15);
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  background: rgba(234, 179, 8, 0.2);
   color: #a16207;
-  border: 1px solid rgba(234, 179, 8, 0.4);
+  border: 1px solid rgba(234, 179, 8, 0.5);
   border-radius: var(--radius-sm);
   font-weight: 600;
   white-space: nowrap;
