@@ -44,7 +44,8 @@ export default function App() {
             className={aba === 'bi' ? 'active' : ''}
             onClick={() => setAba('bi')}
           >
-            Integrações BI
+            <span className="tab-label-full">Integrações BI</span>
+            <span className="tab-label-short">BI</span>
           </button>
         </nav>
       </header>
