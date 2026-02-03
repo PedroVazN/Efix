@@ -44,6 +44,36 @@ export default function Historico({ API_BASE }) {
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(null)
   const [exportando, setExportando] = useState(false)
+  const [seedando, setSeedando] = useState(false)
+  const [seedOk, setSeedOk] = useState(null)
+
+  useEffect(() => {
+    if (seedOk === null) return
+    const t = setTimeout(() => setSeedOk(null), 4000)
+    return () => clearTimeout(t)
+  }, [seedOk])
+
+  const carregarLista = () => {
+    return fetch(`${API_BASE}/registros`)
+      .then((r) => r.json())
+      .then((data) => setLista(Array.isArray(data) ? data : data.registros || []))
+  }
+
+  const adicionarDadosTeste = () => {
+    setSeedando(true)
+    setSeedOk(null)
+    fetch(`${API_BASE}/seed`, { method: 'POST' })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.ok) {
+          setSeedOk(data.inseridos || 20)
+          return carregarLista()
+        }
+        throw new Error(data.error || 'Erro ao adicionar dados')
+      })
+      .catch((err) => setErro(err.message || 'Erro ao adicionar dados de teste'))
+      .finally(() => setSeedando(false))
+  }
 
   useEffect(() => {
     let cancelled = false
@@ -83,6 +113,14 @@ export default function Historico({ API_BASE }) {
     return (
       <div className="card">
         <p className="historico-msg">Nenhum registro ainda.</p>
+        <button
+          type="button"
+          className="btn btn-seed"
+          onClick={adicionarDadosTeste}
+          disabled={seedando}
+        >
+          {seedando ? 'Adicionando...' : 'Adicionar 20 dados de teste'}
+        </button>
       </div>
     )
   }
@@ -92,19 +130,32 @@ export default function Historico({ API_BASE }) {
       <div className="card">
         <div className="historico-header">
           <h2>Últimos registros</h2>
-          <button
-            type="button"
-            className="btn btn-export"
-            onClick={() => {
-              setExportando(true)
-              exportarExcel(lista)
-              setExportando(false)
-            }}
-            disabled={exportando || lista.length === 0}
-          >
-            {exportando ? 'Exportando...' : 'Exportar para Excel'}
-          </button>
+          <div className="historico-actions">
+            <button
+              type="button"
+              className="btn btn-seed"
+              onClick={adicionarDadosTeste}
+              disabled={seedando}
+            >
+              {seedando ? 'Adicionando...' : '+ 20 dados teste'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-export"
+              onClick={() => {
+                setExportando(true)
+                exportarExcel(lista)
+                setExportando(false)
+              }}
+              disabled={exportando || lista.length === 0}
+            >
+              {exportando ? 'Exportando...' : 'Exportar para Excel'}
+            </button>
+          </div>
         </div>
+        {seedOk !== null && (
+          <p className="historico-msg success">+{seedOk} registros de teste adicionados.</p>
+        )}
         <ul className="historico-lista">
           {lista.map((item) => (
             <li key={item.id} className="historico-item">

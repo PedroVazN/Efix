@@ -11,6 +11,35 @@
   margin-bottom: 0;
 }
 
+.historico-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-seed {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  background: rgba(234, 179, 8, 0.15);
+  color: #a16207;
+  border: 1px solid rgba(234, 179, 8, 0.4);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.btn-seed:hover:not(:disabled) {
+  background: rgba(234, 179, 8, 0.25);
+  border-color: #ca8a04;
+  color: #854d0e;
+}
+
+.btn-seed:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .btn-export {
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
@@ -42,6 +71,14 @@
 
 .historico-msg.error {
   color: #b91c1c;
+}
+
+.historico-msg.success {
+  color: var(--success);
+  padding: 0.5rem 0 0;
+  margin-bottom: 0.5rem;
+  text-align: left;
+  font-size: 0.9rem;
 }
 
 .historico-lista {
