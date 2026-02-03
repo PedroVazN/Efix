@@ -1,10 +1,27 @@
 import { useState, useEffect, useMemo } from 'react'
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  LineChart,
+  Line
+} from 'recharts'
 import './Dashboard.css'
+
+const CORES = ['#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0']
 
 export default function Dashboard({ API_BASE }) {
   const [lista, setLista] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(null)
+
   const carregarRegistros = () => {
     setCarregando(true)
     setErro(null)
@@ -38,22 +55,36 @@ export default function Dashboard({ API_BASE }) {
       }
     })
 
-    const maxFluxo = Math.max(0, ...Object.values(porFluxo))
-    const maxPessoa = Math.max(0, ...Object.values(porPessoa))
-    const diasOrdenados = Object.entries(porDia).sort((a, b) => a[0].localeCompare(b[0]))
-    const maxDia = Math.max(0, ...diasOrdenados.map(([, n]) => n))
+    const dadosOperacao = [
+      { name: 'Pegar', value: porOperacao.pegar || 0, fill: CORES[0] },
+      { name: 'Entregar', value: porOperacao.entregar || 0, fill: CORES[1] }
+    ]
+    const dadosNfc = [
+      { name: 'Com NFC', value: comNfc, fill: CORES[0] },
+      { name: 'Sem NFC', value: total - comNfc, fill: '#94a3b8' }
+    ]
+    const dadosFluxo = Object.entries(porFluxo)
+      .sort((a, b) => b[1] - a[1])
+      .map(([nome, qtd]) => ({ name: nome.length > 20 ? nome.slice(0, 20) + '…' : nome, quantidade: qtd }))
+    const dadosPessoa = Object.entries(porPessoa)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([nome, qtd]) => ({ name: nome, quantidade: qtd }))
+    const dadosDia = Object.entries(porDia)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .slice(-14)
+      .map(([dia, qtd]) => ({ dia: formatarDia(dia), quantidade: qtd }))
 
     return {
       total,
       porOperacao,
-      porFluxo,
-      porPessoa,
       comNfc,
       semNfc: total - comNfc,
-      porDia: diasOrdenados,
-      maxFluxo,
-      maxPessoa,
-      maxDia
+      dadosOperacao,
+      dadosNfc,
+      dadosFluxo,
+      dadosPessoa,
+      dadosDia
     }
   }, [lista])
 
@@ -72,14 +103,14 @@ export default function Dashboard({ API_BASE }) {
     )
   }
 
-  const { total, porOperacao, porFluxo, porPessoa, comNfc, semNfc, porDia, maxFluxo, maxPessoa, maxDia } = stats
+  const { total, porOperacao, comNfc, dadosOperacao, dadosNfc, dadosFluxo, dadosPessoa, dadosDia } = stats
 
   return (
     <div className="dashboard">
       <section className="dashboard-cards">
         <div className="stat-card">
           <span className="stat-value">{total}</span>
-          <span className="stat-label">Total de registros</span>
+          <span className="stat-label">Total</span>
         </div>
         <div className="stat-card">
           <span className="stat-value">{porOperacao.pegar || 0}</span>
@@ -95,115 +126,111 @@ export default function Dashboard({ API_BASE }) {
         </div>
       </section>
 
-      <div className="card dashboard-card">
+      <div className="card dashboard-card chart-card">
         <h2>Operações (Pegar vs Entregar)</h2>
-        <div className="chart-bars horizontal">
-          <div className="chart-row">
-            <span className="chart-label">Pegar</span>
-            <div className="chart-track">
-              <div
-                className="chart-bar accent"
-                style={{ width: total ? `${(porOperacao.pegar / total) * 100}%` : 0 }}
-              />
-            </div>
-            <span className="chart-value">{porOperacao.pegar || 0}</span>
-          </div>
-          <div className="chart-row">
-            <span className="chart-label">Entregar</span>
-            <div className="chart-track">
-              <div
-                className="chart-bar accent"
-                style={{ width: total ? `${(porOperacao.entregar / total) * 100}%` : 0 }}
-              />
-            </div>
-            <span className="chart-value">{porOperacao.entregar || 0}</span>
-          </div>
+        <div className="chart-wrap chart-wrap-pie">
+          <ResponsiveContainer width="100%" height={240}>
+            <PieChart margin={{ top: 16, right: 16, bottom: 16, left: 16 }}>
+              <Pie
+                data={dadosOperacao}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius="38%"
+                outerRadius="62%"
+                paddingAngle={2}
+                label={({ name, value }) => `${name}: ${value}`}
+              >
+                {dadosOperacao.map((_, i) => (
+                  <Cell key={i} fill={dadosOperacao[i].fill} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(v) => [v, '']} />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
-      <div className="card dashboard-card">
-        <h2>Registros por fluxo</h2>
-        <div className="chart-bars horizontal">
-          {Object.entries(porFluxo)
-            .sort((a, b) => b[1] - a[1])
-            .map(([nome, qtd]) => (
-              <div key={nome} className="chart-row">
-                <span className="chart-label" title={nome}>{nome.length > 22 ? nome.slice(0, 22) + '…' : nome}</span>
-                <div className="chart-track">
-                  <div
-                    className="chart-bar"
-                    style={{ width: maxFluxo ? `${(qtd / maxFluxo) * 100}%` : 0 }}
-                  />
-                </div>
-                <span className="chart-value">{qtd}</span>
-              </div>
-            ))}
-        </div>
-      </div>
-
-      <div className="card dashboard-card">
-        <h2>Registros por pessoa</h2>
-        <div className="chart-bars horizontal">
-          {Object.entries(porPessoa)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 10)
-            .map(([nome, qtd]) => (
-              <div key={nome} className="chart-row">
-                <span className="chart-label">{nome}</span>
-                <div className="chart-track">
-                  <div
-                    className="chart-bar"
-                    style={{ width: maxPessoa ? `${(qtd / maxPessoa) * 100}%` : 0 }}
-                  />
-                </div>
-                <span className="chart-value">{qtd}</span>
-              </div>
-            ))}
-        </div>
-      </div>
-
-      <div className="card dashboard-card">
+      <div className="card dashboard-card chart-card">
         <h2>NFC (com vs sem tag)</h2>
-        <div className="chart-bars horizontal">
-          <div className="chart-row">
-            <span className="chart-label">Com NFC</span>
-            <div className="chart-track">
-              <div
-                className="chart-bar accent"
-                style={{ width: total ? `${(comNfc / total) * 100}%` : 0 }}
-              />
-            </div>
-            <span className="chart-value">{comNfc}</span>
-          </div>
-          <div className="chart-row">
-            <span className="chart-label">Sem NFC</span>
-            <div className="chart-track">
-              <div
-                className="chart-bar muted"
-                style={{ width: total ? `${(semNfc / total) * 100}%` : 0 }}
-              />
-            </div>
-            <span className="chart-value">{semNfc}</span>
-          </div>
+        <div className="chart-wrap chart-wrap-pie">
+          <ResponsiveContainer width="100%" height={240}>
+            <PieChart margin={{ top: 16, right: 16, bottom: 16, left: 16 }}>
+              <Pie
+                data={dadosNfc}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius="38%"
+                outerRadius="62%"
+                paddingAngle={2}
+                label={({ name, value }) => `${name}: ${value}`}
+              >
+                {dadosNfc.map((_, i) => (
+                  <Cell key={i} fill={dadosNfc[i].fill} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(v) => [v, '']} />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
-      {porDia.length > 0 && (
-        <div className="card dashboard-card">
+      <div className="card dashboard-card chart-card">
+        <h2>Registros por fluxo</h2>
+        <div className="chart-wrap chart-wrap-bar-h">
+          <ResponsiveContainer width="100%" height={Math.min(400, Math.max(220, dadosFluxo.length * 32 + 40))}>
+            <BarChart
+              data={dadosFluxo}
+              layout="vertical"
+              margin={{ top: 8, right: 16, left: 4, bottom: 8 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" />
+              <XAxis type="number" tick={{ fill: 'var(--text-muted)', fontSize: 10 }} />
+              <YAxis type="category" dataKey="name" width={88} tick={{ fill: 'var(--text)', fontSize: 10 }} />
+              <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid var(--border-light)' }} />
+              <Bar dataKey="quantidade" fill="#059669" radius={[0, 6, 6, 0]} name="Registros" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="card dashboard-card chart-card">
+        <h2>Registros por pessoa</h2>
+        <div className="chart-wrap chart-wrap-bar-v">
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={dadosPessoa} margin={{ top: 8, right: 8, left: 8, bottom: 80 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" />
+              <XAxis
+                dataKey="name"
+                tick={{ fill: 'var(--text-muted)', fontSize: 10 }}
+                angle={-40}
+                textAnchor="end"
+                interval={0}
+              />
+              <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 10 }} width={28} />
+              <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid var(--border-light)' }} />
+              <Bar dataKey="quantidade" fill="#10b981" radius={[6, 6, 0, 0]} name="Registros" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {dadosDia.length > 0 && (
+        <div className="card dashboard-card chart-card">
           <h2>Registros por dia</h2>
-          <div className="chart-bars horizontal compact">
-            {porDia.slice(-14).map(([dia, qtd]) => (
-              <div key={dia} className="chart-row">
-                <span className="chart-label">{formatarDia(dia)}</span>
-                <div className="chart-track">
-                  <div
-                    className="chart-bar"
-                    style={{ width: maxDia ? `${(qtd / maxDia) * 100}%` : 0 }}
-                  />
-                </div>
-                <span className="chart-value">{qtd}</span>
-              </div>
-            ))}
+          <div className="chart-wrap chart-wrap-line">
+            <ResponsiveContainer width="100%" height={240}>
+              <LineChart data={dadosDia} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-light)" />
+                <XAxis dataKey="dia" tick={{ fill: 'var(--text-muted)', fontSize: 10 }} />
+                <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 10 }} width={28} />
+                <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid var(--border-light)' }} />
+                <Line type="monotone" dataKey="quantidade" stroke="#059669" strokeWidth={2.5} dot={{ fill: '#059669', r: 3 }} name="Registros" />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
       )}

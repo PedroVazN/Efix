@@ -2,6 +2,7 @@ import { useState } from 'react'
 import FluxoForm from './components/FluxoForm'
 import Historico from './components/Historico'
 import Dashboard from './components/Dashboard'
+import IntegracoesBI from './components/IntegracoesBI'
 import './App.css'
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api'
@@ -39,6 +40,12 @@ export default function App() {
           >
             Dashboard
           </button>
+          <button
+            className={aba === 'bi' ? 'active' : ''}
+            onClick={() => setAba('bi')}
+          >
+            Integrações BI
+          </button>
         </nav>
       </header>
       <main className="main">
@@ -51,6 +58,7 @@ export default function App() {
         {aba === 'dashboard' && (
           <Dashboard API_BASE={API_BASE} key={refreshHistorico} />
         )}
+        {aba === 'bi' && <IntegracoesBI />}
       </main>
     </div>
   )

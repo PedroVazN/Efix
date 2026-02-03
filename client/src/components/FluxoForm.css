@@ -4,6 +4,8 @@
 
 .nfc-hint {
   font-size: 0.9rem;
+  font-weight: 500;
   color: var(--text-muted);
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.875rem;
+  line-height: 1.4;
 }

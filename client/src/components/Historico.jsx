@@ -1,10 +1,49 @@
 import { useState, useEffect } from 'react'
 import './Historico.css'
 
+function escapeCsv(val) {
+  if (val == null) return ''
+  const s = String(val)
+  if (s.includes('"') || s.includes(',') || s.includes('\n')) return `"${s.replace(/"/g, '""')}"`
+  return s
+}
+
+function formatarDataHora(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  return d.toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+}
+
+function exportarExcel(lista) {
+  const headers = ['Pessoa', 'Operação', 'Fluxo', 'NFC', 'Data e hora']
+  const rows = lista.map((r) => [
+    escapeCsv(r.pessoa),
+    escapeCsv(r.operacao),
+    escapeCsv(r.fluxo),
+    escapeCsv(r.nfc || ''),
+    escapeCsv(formatarDataHora(r.dataHora))
+  ])
+  const csv = '\uFEFF' + [headers.join(';'), ...rows.map((row) => row.join(';'))].join('\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `eloger-registros-${new Date().toISOString().slice(0, 10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function Historico({ API_BASE }) {
   const [lista, setLista] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState(null)
+  const [exportando, setExportando] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -51,7 +90,21 @@ export default function Historico({ API_BASE }) {
   return (
     <div className="historico">
       <div className="card">
-        <h2>Últimos registros</h2>
+        <div className="historico-header">
+          <h2>Últimos registros</h2>
+          <button
+            type="button"
+            className="btn btn-export"
+            onClick={() => {
+              setExportando(true)
+              exportarExcel(lista)
+              setExportando(false)
+            }}
+            disabled={exportando || lista.length === 0}
+          >
+            {exportando ? 'Exportando...' : 'Exportar para Excel'}
+          </button>
+        </div>
         <ul className="historico-lista">
           {lista.map((item) => (
             <li key={item.id} className="historico-item">

@@ -1,18 +1,27 @@
 :root {
-  --bg: #f0f9f4;
+  --bg: #f0fdf4;
+  --bg-subtle: #ecfdf5;
   --bg-card: #ffffff;
   --bg-card-hover: #f0fdf4;
-  --accent: #0d9668;
-  --accent-hover: #0b8259;
-  --accent-soft: rgba(13, 150, 104, 0.12);
-  --text: #1a2e24;
-  --text-muted: #52796f;
-  --success: #0d9668;
-  --border: #c8e6d4;
-  --border-light: #dcfce7;
-  --shadow: 0 2px 12px rgba(13, 150, 104, 0.08);
-  --shadow-card: 0 4px 20px rgba(13, 150, 104, 0.1);
-  --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --accent: #059669;
+  --accent-hover: #047857;
+  --accent-light: #10b981;
+  --accent-soft: rgba(5, 150, 105, 0.12);
+  --accent-glow: rgba(5, 150, 105, 0.25);
+  --text: #134e4a;
+  --text-muted: #0f766e;
+  --text-soft: #115e59;
+  --success: #059669;
+  --border: #a7f3d0;
+  --border-light: #d1fae5;
+  --shadow: 0 4px 20px rgba(5, 150, 105, 0.06);
+  --shadow-card: 0 8px 32px rgba(5, 150, 105, 0.08);
+  --shadow-card-hover: 0 12px 40px rgba(5, 150, 105, 0.12);
+  --radius: 16px;
+  --radius-sm: 12px;
+  --radius-pill: 999px;
+  --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --transition: 0.2s ease;
 }
 
 * {
@@ -23,7 +32,8 @@
 
 body {
   font-family: var(--font);
-  background: var(--bg);
+  background: linear-gradient(165deg, var(--bg) 0%, var(--bg-subtle) 60%, #dcfce7 100%);
+  background-attachment: fixed;
   color: var(--text);
   min-height: 100vh;
   min-height: 100dvh;
